@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<template id="__bundler_thumbnail" data-bg-color="#08090f">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="55" fill="none" stroke="#35D6E0" stroke-width="3"/>
+    <circle cx="100" cy="100" r="30" fill="#A78BFA" opacity="0.5"/>
+    <circle cx="100" cy="100" r="80" fill="none" stroke="#35D6E0" stroke-width="1" opacity="0.4"/>
+  </svg>
+</template>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="ext-resource-dependency" content="./hackcore.js" data-resource-id="hackcore" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    body { margin: 0; background: #08090f; font-family: 'Inter', system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    ::selection { background: rgba(53,214,224,0.3); }
+    a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid #35D6E0; outline-offset: 2px; }
+    @keyframes twinkle { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+    @keyframes spinrev { to { transform: translate(-50%,-50%) rotate(-360deg); } }
+    @keyframes pulseglow { 0%,100% { opacity: 0.45; } 50% { opacity: 0.9; } }
+    @keyframes sheen { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    @keyframes drift { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(3%,-4%,0) scale(1.12); } }
+    </style>
+    @keyframes bob { 0%,100% { transform: translate(-50%,-50%) translateY(0); } 50% { transform: translate(-50%,-50%) translateY(-8px); } }
+    @keyframes creditGlow { 0%,100% { filter: drop-shadow(0 0 6px rgba(53,214,224,0.3)); } 50% { filter: drop-shadow(0 0 16px rgba(167,139,250,0.5)); } }
+    @media (prefers-reduced-motion: reduce) {
+      *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+</helmet>
+
+<div style="position:relative;background:#08090f;color:#eef0fa;overflow-x:hidden;min-height:100vh">
+
+  <!-- ATMOSPHERE -->
+  <div style="position:fixed;inset:0;z-index:0;pointer-events:none">
+    <div style="position:absolute;width:70vw;height:70vw;left:-15vw;top:-20vw;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,0.16),transparent 62%);filter:blur(20px);animation:drift 26s ease-in-out infinite"></div>
+    <div style="position:absolute;width:60vw;height:60vw;right:-18vw;top:6vw;border-radius:50%;background:radial-gradient(circle,rgba(53,214,224,0.14),transparent 62%);filter:blur(20px);animation:drift 34s ease-in-out infinite reverse"></div>
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(238,240,250,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(238,240,250,0.035) 1px,transparent 1px);background-size:88px 88px;mask-image:radial-gradient(ellipse at 50% 0%,#000 10%,transparent 72%);-webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 10%,transparent 72%)"></div>
+    <sc-for list="{{ stars }}" as="s" hint-placeholder-count="0">
+      <div style="{{ s.style }}"></div>
+    </sc-for>
+  </div>
+
+  <!-- NAV -->
+  <nav style="{{ navStyle }}">
+    <div style="display:flex;align-items:center;gap:11px;margin-right:auto">
+      <div style="width:28px;height:28px;border-radius:50%;border:1px solid rgba(53,214,224,0.75);position:relative;flex:none;box-shadow:0 0 18px rgba(53,214,224,0.35)">
+        <div style="position:absolute;inset:6px;border-radius:50%;background:linear-gradient(140deg,#35D6E0,#A78BFA)"></div>
+      </div>
+      <span style="font-weight:500;font-size:16px;letter-spacing:0.06em">HACKUNIVERSE</span>
+    </div>
+    <sc-if value="{{ !isMobile }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:18px">
+        <a href="#about" style="color:#c9cee3;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;white-space:nowrap">ABOUT</a>
+        <a href="#galaxies" style="color:#c9cee3;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;white-space:nowrap">GALAXIES</a>
+        <a href="#timeline" style="color:#c9cee3;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;white-space:nowrap">TIMELINE</a>
+        <a href="#flow" style="color:#c9cee3;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;white-space:nowrap">FLOW</a>
+        <a href="#rules" style="color:#c9cee3;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;white-space:nowrap">RULES</a>
+        <a href="#faq" style="color:#c9cee3;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;white-space:nowrap">FAQ</a>
+        <a href="{{ registerUrl }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;color:#35D6E0;border:1px solid #35D6E0;border-radius:8px;padding:9px 16px;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;white-space:nowrap;box-shadow:0 0 20px rgba(53,214,224,0.2)" style-hover="background:rgba(53,214,224,0.12)">REGISTER →</a>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMobileMenu }}" aria-label="Menu" style="background:transparent;border:1px solid rgba(238,240,250,0.2);border-radius:8px;width:42px;height:42px;color:#eef0fa;font-size:18px;cursor:pointer">☰</button>
+    </sc-if>
+  </nav>
+
+  <sc-if value="{{ mobileMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,#0b0d17,#12142a);display:flex;flex-direction:column;padding:24px">
+      <div style="display:flex;justify-content:flex-end"><button onClick="{{ toggleMobileMenu }}" aria-label="Close" style="background:transparent;border:1px solid rgba(238,240,250,0.2);border-radius:8px;width:42px;height:42px;color:#eef0fa;font-size:18px;cursor:pointer">✕</button></div>
+      <div style="display:flex;flex-direction:column;gap:24px;align-items:flex-start;margin-top:48px;padding-left:8px">
+        <a onClick="{{ toggleMobileMenu }}" href="#about" style="color:#eef0fa;text-decoration:none;font-size:28px;letter-spacing:-0.01em">About</a>
+        <a onClick="{{ toggleMobileMenu }}" href="#galaxies" style="color:#eef0fa;text-decoration:none;font-size:28px;letter-spacing:-0.01em">Galaxies</a>
+        <a onClick="{{ toggleMobileMenu }}" href="#timeline" style="color:#eef0fa;text-decoration:none;font-size:28px;letter-spacing:-0.01em">Timeline</a>
+        <a onClick="{{ toggleMobileMenu }}" href="#flow" style="color:#eef0fa;text-decoration:none;font-size:28px;letter-spacing:-0.01em">Flow</a>
+        <a onClick="{{ toggleMobileMenu }}" href="#rules" style="color:#eef0fa;text-decoration:none;font-size:28px;letter-spacing:-0.01em">Rules</a>
+        <a onClick="{{ toggleMobileMenu }}" href="#faq" style="color:#eef0fa;text-decoration:none;font-size:28px;letter-spacing:-0.01em">FAQ</a>
+        <a href="{{ registerUrl }}" target="_blank" rel="noopener noreferrer" style="color:#35D6E0;border:1px solid #35D6E0;border-radius:8px;padding:14px 26px;text-decoration:none;font-size:17px;margin-top:14px;box-shadow:0 0 24px rgba(53,214,224,0.25)">REGISTER →</a>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- HERO -->
+  <section style="position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:150px 20px 110px" data-screen-label="Hero">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
+      <div style="width:min(1000px,120vw);aspect-ratio:1/1;position:relative;opacity:0.95">
+        <sc-if value="{{ showCore }}" hint-placeholder-val="{{ true }}">
+          <canvas ref="{{ heroCanvasRef }}" style="width:100%;height:100%;display:block"></canvas>
+        </sc-if>
+        <sc-if value="{{ !showCore }}" hint-placeholder-val="{{ false }}">
+          <div style="width:58%;height:58%;margin:21% auto;border-radius:50%;background:radial-gradient(circle,rgba(53,214,224,0.3),rgba(167,139,250,0.16) 45%,transparent 72%);{{ motion.coreGlow }}"></div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="position:absolute;left:0;right:0;bottom:0;height:38vh;pointer-events:none;background:linear-gradient(to top,#08090f 12%,rgba(8,9,15,0) 100%)"></div>
+
+    <div style="position:relative;z-index:1;max-width:1000px;display:flex;flex-direction:column;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:0.24em;color:#8FECF1;border:1px solid rgba(53,214,224,0.35);border-radius:999px;padding:8px 20px;background:rgba(11,13,23,0.5);backdrop-filter:blur(8px)">
+        <span style="width:6px;height:6px;border-radius:50%;background:#35D6E0;box-shadow:0 0 10px #35D6E0;animation:pulseglow 2s ease-in-out infinite"></span>
+        SIH 2026 INTERNAL HACKATHON
+      </div>
+      <h1 style="font-size:clamp(56px,13vw,168px);font-weight:500;letter-spacing:-0.04em;line-height:0.9;margin:14px 0 0;background:linear-gradient(100deg,#ffffff 20%,#8FECF1 42%,#A78BFA 62%,#ffffff 85%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 9s linear infinite;filter:drop-shadow(0 0 40px rgba(53,214,224,0.25))">HACKUNIVERSE</h1>
+      <div style="display:flex;align-items:center;gap:16px;margin-top:6px">
+        <span style="width:clamp(28px,8vw,90px);height:1px;background:linear-gradient(to right,transparent,rgba(53,214,224,0.7))"></span>
+        <span style="font-size:clamp(11px,1.4vw,13px);letter-spacing:0.28em;color:#9aa6c4;white-space:nowrap">AI &amp; DS INNOVATION HACKATHON</span>
+        <span style="width:clamp(28px,8vw,90px);height:1px;background:linear-gradient(to left,transparent,rgba(167,139,250,0.7))"></span>
+      </div>
+      <h2 style="font-size:clamp(24px,4.2vw,44px);font-weight:500;color:#eef0fa;margin:22px 0 0;line-height:1.18;letter-spacing:-0.015em">TURNING IDEAS INTO<br/><span style="color:#8FECF1">INTELLIGENT SOLUTIONS</span></h2>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:36px">
+        <a href="{{ registerUrl }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:10px;color:#35D6E0;border:1px solid #35D6E0;border-radius:8px;padding:16px 34px;text-decoration:none;font-size:15px;letter-spacing:0.06em;background:rgba(53,214,224,0.06);box-shadow:0 0 36px rgba(53,214,224,0.28)" style-hover="background:rgba(53,214,224,0.16)">REGISTER NOW →</a>
+        <a href="#galaxies" style="display:inline-flex;align-items:center;gap:10px;color:#eef0fa;border:1px solid rgba(238,240,250,0.22);border-radius:8px;padding:16px 34px;text-decoration:none;font-size:15px;letter-spacing:0.06em" style-hover="background:rgba(238,240,250,0.07)">EXPLORE THE UNIVERSE</a>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:30px;font-size:11px;letter-spacing:0.22em;color:#71789c;animation:floaty 2.6s ease-in-out infinite">SCROLL TO EXPLORE ↓</div>
+  </section>
+
+  <!-- HERO STATS -->
+  <section ref="{{ rv.stats.ref }}" style="position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;padding:0 clamp(20px,6vw,80px) clamp(80px,10vw,140px);max-width:1280px;margin:0 auto;{{ rv.stats.dyn }}">
+    <sc-for list="{{ heroStats }}" as="stat" hint-placeholder-count="4">
+      <div style="position:relative;background:linear-gradient(160deg,rgba(23,26,43,0.92),rgba(13,15,26,0.92));border:1px solid rgba(238,240,250,0.1);border-radius:14px;padding:26px;text-align:left;overflow:hidden;transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s" style-hover="transform:translateY(-6px);border-color:rgba(53,214,224,0.45);box-shadow:0 18px 50px rgba(0,0,0,0.5)">
+        <div style="position:absolute;top:0;left:0;width:56px;height:1px;background:linear-gradient(to right,#35D6E0,transparent)"></div>
+        <div style="font-size:clamp(28px,3.4vw,38px);font-weight:500;letter-spacing:-0.02em;background:linear-gradient(120deg,#8FECF1,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent">{{ stat.value }}</div>
+        <div style="font-size:11px;letter-spacing:0.14em;color:#9aa6c4;margin-top:10px">{{ stat.label }}</div>
+      </div>
+    </sc-for>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" ref="{{ rv.about.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);max-width:1280px;margin:0 auto;{{ rv.about.dyn }}" data-screen-label="About">
+    <div style="position:absolute;right:clamp(20px,6vw,80px);top:clamp(50px,7vw,110px);font-size:clamp(90px,16vw,240px);font-weight:500;line-height:0.8;color:transparent;-webkit-text-stroke:1px rgba(238,240,250,0.055);pointer-events:none;user-select:none">01</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <span style="width:8px;height:8px;transform:rotate(45deg);background:#35D6E0"></span>
+      <span style="font-size:11px;letter-spacing:0.24em;color:#35D6E0">ABOUT</span>
+      <span style="flex:1;max-width:180px;height:1px;background:linear-gradient(to right,rgba(53,214,224,0.5),transparent)"></span>
+    </div>
+    <h2 style="font-size:clamp(34px,5.4vw,62px);font-weight:500;letter-spacing:-0.03em;max-width:820px;margin:0 0 24px;line-height:1.04">WHAT IS <span style="background:linear-gradient(110deg,#8FECF1,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent">HACKUNIVERSE</span>?</h2>
+    <p style="font-size:clamp(16px,1.7vw,19px);line-height:1.75;color:#c9cee3;max-width:720px;margin:0 0 64px">HACKUNIVERSE is an AI &amp; DS Innovation Hackathon where student teams transform real-world problems into intelligent, innovative and demonstrable solutions.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px">
+      <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
+        <div style="position:relative;background:linear-gradient(165deg,rgba(23,26,43,0.9),rgba(12,14,24,0.9));border:1px solid rgba(238,240,250,0.09);border-radius:14px;padding:34px 30px;overflow:hidden;transition:border-color 0.25s,transform 0.25s" style-hover="border-color:rgba(167,139,250,0.45);transform:translateY(-4px)">
+          <div style="position:absolute;right:-10px;bottom:-24px;font-size:96px;font-weight:500;color:rgba(238,240,250,0.04);line-height:1">{{ p.tag }}</div>
+          <div style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(53,214,224,0.5);display:flex;align-items:center;justify-content:center;font-size:11px;color:#8FECF1;margin-bottom:20px">{{ p.tag }}</div>
+          <div style="font-size:24px;font-weight:500;margin-bottom:10px;letter-spacing:0.02em">{{ p.title }}</div>
+          <div style="font-size:15px;color:#9aa6c4;line-height:1.6">{{ p.desc }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- EVENT SNAPSHOT -->
+  <section ref="{{ rv.snapshot.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);background:linear-gradient(180deg,rgba(16,18,31,0),rgba(16,18,31,0.9) 22%,rgba(16,18,31,0.9) 78%,rgba(16,18,31,0));{{ rv.snapshot.dyn }}">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <span style="width:8px;height:8px;transform:rotate(45deg);background:#A78BFA"></span>
+        <span style="font-size:11px;letter-spacing:0.24em;color:#A78BFA">EVENT SNAPSHOT</span>
+        <span style="flex:1;max-width:180px;height:1px;background:linear-gradient(to right,rgba(167,139,250,0.5),transparent)"></span>
+      </div>
+      <h2 style="font-size:clamp(30px,4.6vw,52px);font-weight:500;letter-spacing:-0.03em;margin:0 0 48px">MISSION PARAMETERS</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:rgba(238,240,250,0.09);border:1px solid rgba(238,240,250,0.09);border-radius:16px;overflow:hidden">
+        <sc-for list="{{ snapshot }}" as="s" hint-placeholder-count="7">
+          <div style="background:rgba(10,12,21,0.96);padding:28px 24px;transition:background 0.25s" style-hover="background:rgba(23,26,43,0.96)">
+            <div style="font-size:10px;letter-spacing:0.18em;color:#71789c;margin-bottom:12px">{{ s.k }}</div>
+            <div style="font-size:17px;color:#eef0fa;line-height:1.35;letter-spacing:-0.01em">{{ s.v }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALAXIES -->
+  <section id="galaxies" ref="{{ rv.galaxies.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);max-width:1320px;margin:0 auto;{{ rv.galaxies.dyn }}" data-screen-label="Galaxies">
+    <div style="text-align:center;max-width:760px;margin:0 auto 26px">
+      <div style="font-size:11px;letter-spacing:0.24em;color:#35D6E0;margin-bottom:16px">EXPLORE THE HACK UNIVERSE</div>
+      <h2 style="font-size:clamp(32px,5.4vw,62px);font-weight:500;letter-spacing:-0.03em;margin:0 0 16px;line-height:1.05">17 GALAXIES OF <span style="background:linear-gradient(110deg,#8FECF1,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent">INNOVATION</span></h2>
+      <p style="font-size:16px;color:#9aa6c4;line-height:1.7">Each galaxy is one official SIH 2026 theme. Select a node to enter it.</p>
+    </div>
+    <div style="max-width:440px;margin:0 auto 56px">
+      <input value="{{ search }}" onChange="{{ onSearch }}" aria-label="Search innovation domains" placeholder="Search innovation domains..." style="width:100%;background:rgba(23,26,43,0.85);border:1px solid rgba(238,240,250,0.15);border-radius:999px;padding:14px 22px;color:#eef0fa;font-size:14px;font-family:inherit;text-align:center;transition:box-shadow 0.3s,border-color 0.3s" style-focus="box-shadow:0 0 0 4px rgba(53,214,224,0.18);border-color:#35D6E0;outline:none" />
+    </div>
+
+    <sc-if value="{{ !isMobile }}" hint-placeholder-val="{{ true }}">
+      <div style="width:min(780px,92vw);aspect-ratio:1/1;margin:0 auto;position:relative">
+        <div style="position:absolute;left:50%;top:50%;width:27%;aspect-ratio:1/1;border-radius:50%;border:1px dashed rgba(53,214,224,0.22);transform:translate(-50%,-50%);animation:spin 90s linear infinite"></div>
+        <div style="position:absolute;left:50%;top:50%;width:42%;aspect-ratio:1/1;border-radius:50%;border:1px dashed rgba(167,139,250,0.18);transform:translate(-50%,-50%);animation:spinrev 140s linear infinite"></div>
+        <div style="position:absolute;left:50%;top:50%;width:60%;aspect-ratio:1/1;border-radius:50%;border:1px solid rgba(238,240,250,0.05);transform:translate(-50%,-50%)"></div>
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(53,214,224,0.22),rgba(167,139,250,0.08) 45%,transparent 70%);display:flex;align-items:center;justify-content:center;text-align:center;animation:pulseglow 5s ease-in-out infinite">
+          <div style="font-size:12px;letter-spacing:0.16em;line-height:1.5;color:#8FECF1;border:1px solid rgba(53,214,224,0.45);border-radius:50%;width:124px;height:124px;display:flex;align-items:center;justify-content:center;background:rgba(8,9,15,0.55);backdrop-filter:blur(4px)">HACK<br/>CORE</div>
+        </div>
+        <sc-for list="{{ orbitThemes }}" as="t" hint-placeholder-count="17">
+          <button onClick="{{ t.onSelect }}" style="{{ t.nodeStyle }}" style-hover="opacity:1;transform:translate(-50%,-50%) scale(1.12)">
+            <span style="{{ t.numStyle }}">{{ t.id }}</span>
+            <span style="{{ t.labelStyle }}">{{ t.name }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 18px;margin:0 -4px">
+        <sc-for list="{{ filteredThemes }}" as="t" hint-placeholder-count="6">
+          <button onClick="{{ t.onSelect }}" style="scroll-snap-align:start;flex:0 0 210px;text-align:left;background:linear-gradient(165deg,rgba(23,26,43,0.95),rgba(12,14,24,0.95));border:1px solid rgba(238,240,250,0.12);border-radius:16px;padding:24px;color:#eef0fa;cursor:pointer">
+            <div style="font-size:10px;color:#35D6E0;letter-spacing:0.18em;margin-bottom:14px">GALAXY {{ t.id }}</div>
+            <div style="font-size:16px;font-weight:500;line-height:1.35;letter-spacing:-0.01em">{{ t.name }}</div>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+  </section>
+
+  <sc-if value="{{ selectedTheme }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:250;background:rgba(8,9,15,0.86);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px" onClick="{{ closeTheme }}">
+      <div onClick="{{ stop }}" style="position:relative;background:linear-gradient(160deg,rgba(23,26,43,0.98),rgba(13,15,26,0.98));border:1px solid rgba(167,139,250,0.42);border-radius:18px;padding:44px;max-width:560px;width:100%;box-shadow:0 0 80px rgba(167,139,250,0.18)">
+        <div style="font-size:11px;letter-spacing:0.2em;color:#A78BFA;margin-bottom:14px">THEME {{ selectedTheme.id }}</div>
+        <h3 style="font-size:clamp(24px,3.6vw,34px);font-weight:500;margin:0 0 28px;line-height:1.2;letter-spacing:-0.02em">{{ selectedTheme.name }}</h3>
+        <button onClick="{{ closeTheme }}" style="color:#35D6E0;border:1px solid #35D6E0;border-radius:8px;padding:11px 22px;background:transparent;font-size:13px;letter-spacing:0.1em;cursor:pointer;font-family:inherit">CLOSE</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- DAY 1 -->
+  <section id="timeline" ref="{{ rv.day1.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);background:linear-gradient(180deg,rgba(16,18,31,0),rgba(16,18,31,0.85) 18%,rgba(16,18,31,0.85) 82%,rgba(16,18,31,0));{{ rv.day1.dyn }}" data-screen-label="Day 1 Timeline">
+    <div style="max-width:980px;margin:0 auto">
+      <div style="display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:8px">
+        <span style="font-size:clamp(44px,7vw,86px);font-weight:500;letter-spacing:-0.04em;color:transparent;-webkit-text-stroke:1px rgba(53,214,224,0.55);line-height:1">DAY 01</span>
+        <h2 style="font-size:clamp(26px,3.6vw,40px);font-weight:500;margin:0;letter-spacing:-0.02em">INAUGURATION</h2>
+      </div>
+      <div style="font-size:14px;letter-spacing:0.12em;color:#8FECF1;margin-bottom:52px">3:00 PM – 4:30 PM</div>
+      <div style="position:relative;padding-left:30px;background:linear-gradient(to bottom,transparent,rgba(53,214,224,0.5) 6%,rgba(53,214,224,0.5) 94%,transparent) no-repeat left top / 1px 100%">
+        <sc-for list="{{ day1 }}" as="e" hint-placeholder-count="11">
+          <div style="position:relative;padding-bottom:34px">
+            <div style="position:absolute;left:-34px;top:5px;width:9px;height:9px;border-radius:50%;background:#35D6E0;box-shadow:0 0 12px rgba(53,214,224,0.8);animation:pulseglow 2.4s ease-in-out infinite"></div>
+            <div style="font-size:12px;color:#8FECF1;letter-spacing:0.1em;margin-bottom:6px">{{ e.time }}</div>
+            <div style="font-size:18px;font-weight:500;margin-bottom:5px;letter-spacing:-0.01em">{{ e.title }}</div>
+            <div style="font-size:13px;color:#71789c">{{ e.resp }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section ref="{{ rv.day2.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);{{ rv.day2.dyn }}" data-screen-label="Day 2 Timeline">
+    <div style="max-width:980px;margin:0 auto">
+      <div style="display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:8px">
+        <span style="font-size:clamp(44px,7vw,86px);font-weight:500;letter-spacing:-0.04em;color:transparent;-webkit-text-stroke:1px rgba(167,139,250,0.55);line-height:1">DAY 02</span>
+        <h2 style="font-size:clamp(26px,3.6vw,40px);font-weight:500;margin:0;letter-spacing:-0.02em">8-HOUR HACKATHON</h2>
+      </div>
+      <div style="font-size:14px;letter-spacing:0.12em;color:#A78BFA;margin-bottom:52px">10:00 AM – 6:00 PM</div>
+      <div style="position:relative;padding-left:30px;background:linear-gradient(to bottom,transparent,rgba(167,139,250,0.45) 6%,rgba(167,139,250,0.45) 94%,transparent) no-repeat left top / 1px 100%">
+        <sc-for list="{{ day2 }}" as="e" hint-placeholder-count="13">
+          <div style="{{ e.rowStyle }}">
+            <div style="{{ e.dotStyle }}"></div>
+            <div style="{{ e.timeStyle }}">{{ e.time }}</div>
+            <div style="{{ e.titleStyle }}">{{ e.title }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEADLINE -->
+  <section ref="{{ rv.deadline.ref }}" style="position:relative;z-index:1;overflow:hidden;padding:clamp(90px,12vw,190px) clamp(20px,6vw,80px);text-align:center;border-top:1px solid rgba(238,240,250,0.08);border-bottom:1px solid rgba(238,240,250,0.08);background:radial-gradient(ellipse at 50% 50%,rgba(53,214,224,0.12),rgba(8,9,15,0) 62%);{{ rv.deadline.dyn }}" data-screen-label="Deadline">
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(238,240,250,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(238,240,250,0.04) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse at 50% 50%,#000,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 50% 50%,#000,transparent 70%);pointer-events:none"></div>
+    <div style="position:relative">
+      <div style="font-size:11px;letter-spacing:0.3em;color:#9aa6c4;margin-bottom:34px">THE DEADLINE</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div style="font-size:clamp(17px,2.2vw,24px);color:#c9cee3;letter-spacing:0.02em">4:15 PM — Final Submission Preparation</div>
+        <div style="color:#4b5170;font-size:22px;margin:10px 0;animation:floaty 2.2s ease-in-out infinite">↓</div>
+        <div style="font-size:clamp(64px,15vw,190px);font-weight:500;letter-spacing:-0.05em;line-height:0.92;background:linear-gradient(120deg,#8FECF1,#35D6E0 60%,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 50px rgba(53,214,224,0.45))">4:30 PM</div>
+        <div style="display:inline-flex;align-items:center;gap:10px;font-size:clamp(15px,2vw,20px);letter-spacing:0.16em;color:#eef0fa;margin-top:14px;border:1px solid rgba(53,214,224,0.4);border-radius:999px;padding:12px 26px;background:rgba(8,9,15,0.5)">🔒 SUBMISSION CLOSED</div>
+        <div style="color:#4b5170;font-size:22px;margin:26px 0 10px;animation:floaty 2.2s ease-in-out infinite">↓</div>
+        <div style="font-size:clamp(28px,5vw,58px);font-weight:500;letter-spacing:-0.03em;color:#A78BFA;line-height:1">5:00 PM</div>
+        <div style="font-size:14px;letter-spacing:0.16em;color:#c9cee3;margin-top:8px">🎤 PROJECT DEMOS BEGIN</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION FLOW -->
+  <section id="flow" ref="{{ rv.flow.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);max-width:1280px;margin:0 auto;{{ rv.flow.dyn }}" data-screen-label="Mission Flow">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <span style="width:8px;height:8px;transform:rotate(45deg);background:#35D6E0"></span>
+      <span style="font-size:11px;letter-spacing:0.24em;color:#35D6E0">MISSION FLOW</span>
+      <span style="flex:1;max-width:180px;height:1px;background:linear-gradient(to right,rgba(53,214,224,0.5),transparent)"></span>
+    </div>
+    <h2 style="font-size:clamp(30px,4.6vw,52px);font-weight:500;letter-spacing:-0.03em;margin:0 0 56px">FROM REGISTRATION TO RESULTS</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px">
+      <sc-for list="{{ flowSteps }}" as="f" hint-placeholder-count="10">
+        <div style="position:relative;display:flex;align-items:center;gap:14px;background:linear-gradient(140deg,rgba(23,26,43,0.9),rgba(12,14,24,0.9));border:1px solid rgba(238,240,250,0.09);border-radius:12px;padding:18px 20px;transition:border-color 0.25s,transform 0.25s" style-hover="border-color:rgba(53,214,224,0.45);transform:translateY(-3px)">
+          <span style="{{ f.dot }}"></span>
+          <span style="font-size:11px;color:#35D6E0;letter-spacing:0.08em;min-width:22px">{{ f.num }}</span>
+          <span style="font-size:13px;letter-spacing:0.08em;color:#eef0fa">{{ f.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- PITCH FORMAT -->
+  <section ref="{{ rv.pitch.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);background:linear-gradient(180deg,rgba(16,18,31,0),rgba(16,18,31,0.85) 18%,rgba(16,18,31,0.85) 82%,rgba(16,18,31,0));{{ rv.pitch.dyn }}">
+    <div style="max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;gap:70px;align-items:center;justify-content:center">
+      <div style="flex:1 1 300px;min-width:280px">
+        <div style="font-size:11px;letter-spacing:0.24em;color:#A78BFA;margin-bottom:16px">THE 5-MINUTE PITCH</div>
+        <h2 style="font-size:clamp(30px,4.6vw,52px);font-weight:500;letter-spacing:-0.03em;margin:0 0 36px">FINAL PITCH FORMAT</h2>
+        <sc-for list="{{ pitchSegments }}" as="p" hint-placeholder-count="4">
+          <div style="display:flex;gap:18px;align-items:center;padding:16px 0;border-bottom:1px solid rgba(238,240,250,0.08)">
+            <span style="{{ p.swatch }}"></span>
+            <div style="font-size:13px;color:#8FECF1;min-width:58px;letter-spacing:0.08em">{{ p.dur }}</div>
+            <div style="font-size:16px;color:#eef0fa">{{ p.label }}</div>
+          </div>
+        </sc-for>
+        <div style="margin-top:24px;font-size:13px;color:#71789c">Followed by Judges Q&amp;A — 2–3 minutes, if required.</div>
+      </div>
+      <div style="flex:0 0 300px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 40px rgba(53,214,224,0.2))">
+        <svg width="290" height="290" viewBox="0 0 240 240" aria-label="Five minute pitch breakdown">
+          <circle cx="120" cy="120" r="100" fill="none" stroke="rgba(238,240,250,0.08)" stroke-width="16"></circle>
+          <sc-for list="{{ pitchArcs }}" as="arc" hint-placeholder-count="4">
+            <circle cx="120" cy="120" r="100" fill="none" stroke="{{ arc.color }}" stroke-width="16" stroke-linecap="butt" stroke-dasharray="{{ arc.dash }}" stroke-dashoffset="{{ arc.offset }}" transform="rotate(-90 120 120)"></circle>
+          </sc-for>
+          <text x="120" y="114" text-anchor="middle" fill="#eef0fa" font-size="48" font-weight="500" font-family="Inter">5</text>
+          <text x="120" y="142" text-anchor="middle" fill="#9aa6c4" font-size="12" letter-spacing="3" font-family="Inter">MINUTES</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section id="rules" ref="{{ rv.rules.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);background:linear-gradient(180deg,rgba(16,18,31,0),rgba(16,18,31,0.85) 18%,rgba(16,18,31,0.85) 82%,rgba(16,18,31,0));{{ rv.rules.dyn }}">
+    <div style="max-width:1080px;margin:0 auto">
+      <div style="font-size:11px;letter-spacing:0.24em;color:#35D6E0;margin-bottom:16px">PARTICIPANT INSTRUCTIONS</div>
+      <h2 style="font-size:clamp(30px,4.6vw,52px);font-weight:500;letter-spacing:-0.03em;margin:0 0 44px">BEFORE YOU ENTER THE UNIVERSE</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
+        <sc-for list="{{ rules }}" as="r" hint-placeholder-count="12">
+          <div style="display:flex;gap:16px;background:linear-gradient(150deg,rgba(23,26,43,0.85),rgba(12,14,24,0.85));border:1px solid rgba(238,240,250,0.08);border-radius:12px;padding:20px;transition:border-color 0.25s" style-hover="border-color:rgba(53,214,224,0.35)">
+            <span style="color:#35D6E0;flex:none;font-size:11px;letter-spacing:0.06em;padding-top:2px">{{ r.num }}</span>
+            <span style="font-size:14.5px;color:#c9cee3;line-height:1.6">{{ r.text }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" ref="{{ rv.faq.ref }}" style="position:relative;z-index:1;padding:clamp(70px,9vw,140px) clamp(20px,6vw,80px);max-width:860px;margin:0 auto;{{ rv.faq.dyn }}" data-screen-label="FAQ">
+    <div style="font-size:11px;letter-spacing:0.24em;color:#35D6E0;margin-bottom:16px">FAQ</div>
+    <h2 style="font-size:clamp(30px,4.6vw,52px);font-weight:500;letter-spacing:-0.03em;margin:0 0 44px">FREQUENTLY ASKED QUESTIONS</h2>
+    <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="9">
+      <div style="border-bottom:1px solid rgba(238,240,250,0.1)">
+        <button onClick="{{ f.onToggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:18px;background:transparent;border:none;color:#eef0fa;text-align:left;padding:22px 0;font-size:17px;cursor:pointer;font-family:inherit;letter-spacing:-0.01em">
+          <span>{{ f.q }}</span>
+          <span style="color:#35D6E0;flex:none;font-size:20px">{{ f.icon }}</span>
+        </button>
+        <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
+          <p style="font-size:15px;color:#9aa6c4;line-height:1.7;margin:0 0 24px;max-width:640px">{{ f.a }}</p>
+        </sc-if>
+      </div>
+    </sc-for>
+  </section>
+
+  <!-- REGISTER CTA -->
+  <section id="register" ref="{{ rv.register.ref }}" style="position:relative;z-index:1;overflow:hidden;padding:clamp(100px,13vw,200px) clamp(20px,6vw,80px);text-align:center;{{ rv.register.dyn }}">
+    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(900px,140vw);aspect-ratio:1/1;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,0.18),rgba(53,214,224,0.08) 40%,transparent 66%);pointer-events:none"></div>
+    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,86vw);aspect-ratio:1/1;border-radius:50%;border:1px solid rgba(53,214,224,0.18);pointer-events:none;animation:spin 120s linear infinite"></div>
+    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(700px,94vw);aspect-ratio:1/1;border-radius:50%;border:1px dashed rgba(167,139,250,0.15);pointer-events:none;animation:spinrev 160s linear infinite"></div>
+    <div style="position:relative">
+      <h2 style="font-size:clamp(34px,6.4vw,80px);font-weight:500;margin:0 0 20px;line-height:1.02;letter-spacing:-0.04em">READY TO ENTER THE<br/><span style="background:linear-gradient(110deg,#8FECF1,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent">HACK UNIVERSE?</span></h2>
+      <p style="font-size:17px;color:#9aa6c4;margin:0 0 44px">Your idea could become the next intelligent solution.</p>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+        <a href="{{ registerUrl }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:10px;color:#35D6E0;border:1px solid #35D6E0;border-radius:8px;padding:18px 40px;text-decoration:none;font-size:17px;letter-spacing:0.06em;background:rgba(53,214,224,0.07);box-shadow:0 0 44px rgba(53,214,224,0.3)" style-hover="background:rgba(53,214,224,0.18)">REGISTER NOW →</a>
+        <a href="#galaxies" style="display:inline-flex;align-items:center;gap:10px;color:#eef0fa;border:1px solid rgba(238,240,250,0.22);border-radius:8px;padding:18px 40px;text-decoration:none;font-size:17px;letter-spacing:0.06em" style-hover="background:rgba(238,240,250,0.07)">EXPLORE THEMES</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="position:relative;z-index:1;background:rgba(12,14,24,0.9);padding:clamp(60px,7vw,90px) clamp(20px,6vw,80px) 44px;border-top:1px solid rgba(238,240,250,0.08)">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:44px">
+      <div>
+        <div style="font-weight:500;font-size:clamp(22px,3vw,30px);letter-spacing:-0.02em;margin-bottom:14px;background:linear-gradient(110deg,#eef0fa,#8FECF1);-webkit-background-clip:text;background-clip:text;color:transparent">HACKUNIVERSE</div>
+        <div style="font-size:12px;color:#71789c;line-height:2;letter-spacing:0.06em">SIH 2026 INTERNAL HACKATHON<br/>AI &amp; DS INNOVATION HACKATHON<br/>TURNING IDEAS INTO INTELLIGENT SOLUTIONS</div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:0.18em;color:#9aa6c4;margin-bottom:16px">ORGANIZED BY</div>
+        <div style="font-size:13.5px;color:#c9cee3;line-height:1.9">PGP College of Engineering and Technology (Autonomous), Namakkal<br/>Department of 3rd Year AIDS<br/><a href="https://pgpcet.ac.in/" target="_blank" rel="noopener noreferrer" style="color:#35D6E0;text-decoration:none">pgpcet.ac.in</a></div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:0.18em;color:#9aa6c4;margin-bottom:16px">COORDINATORS</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ coordinators }}" as="c" hint-placeholder-count="5">
+            <div style="display:flex;flex-direction:column;gap:3px;padding-bottom:12px;border-bottom:1px solid rgba(238,240,250,0.07)">
+              <span style="font-size:10px;letter-spacing:0.14em;color:#71789c">{{ c.role }}</span>
+              <span style="font-size:14px;color:#eef0fa">{{ c.name }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:0.18em;color:#9aa6c4;margin-bottom:16px">CONTACT &amp; VENUE</div>
+        <div style="font-size:13.5px;color:#c9cee3;line-height:1.9"><a href="mailto:hackuniverse.2026@gmail.com" style="color:#35D6E0;text-decoration:none">hackuniverse.2026@gmail.com</a><br/>77084665419 · 8838584301<br/>Engineering Block, Main Block, AI &amp; IT Lab, Namakkal<br/><a href="https://maps.app.goo.gl/PLKqtwp8YNcMg2mw9?g_st=aw" target="_blank" rel="noopener noreferrer" style="color:#35D6E0;text-decoration:none">View on Google Maps</a></div>
+      </div>
+    </div>
+    <div style="max-width:1280px;margin:44px auto 0;padding-top:26px;border-top:1px solid rgba(238,240,250,0.08);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;letter-spacing:0.08em;color:#71789c">
+        <span>© 2026 HACKUNIVERSE. All rights reserved.</span>
+        <span style="opacity:0.4">·</span>
+        <a href="./HACKUNIVERSE-Live.html" style="color:#71789c;text-decoration:none" style-hover="color:#35D6E0">Live dashboard</a>
+      </div>
+      <div style="font-size:13px;letter-spacing:0.12em;font-weight:500;background:linear-gradient(110deg,#8FECF1,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent;animation:creditGlow 3s ease-in-out infinite">CRAFTED BY CTRL ALT ELITE</div>
+    </div>
+  </footer>
+
+  <!-- AI ASSISTANT -->
+  <sc-if value="{{ !chatOpen }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ toggleChat }}" aria-label="Open assistant" style="position:fixed;bottom:24px;right:24px;z-index:300;width:58px;height:58px;border-radius:50%;border:1px solid rgba(53,214,224,0.5);background:linear-gradient(150deg,#171a2b,#0d0f1a);color:#8FECF1;font-size:22px;cursor:pointer;box-shadow:0 0 30px rgba(53,214,224,0.3),0 10px 30px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center" style-hover="transform:scale(1.06)">💬</button>
+  </sc-if>
+
+  <sc-if value="{{ chatOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:24px;right:24px;z-index:300;width:min(380px,90vw);height:min(560px,74vh);display:flex;flex-direction:column;background:linear-gradient(165deg,rgba(17,19,32,0.98),rgba(10,12,20,0.98));border:1px solid rgba(53,214,224,0.35);border-radius:18px;box-shadow:0 0 60px rgba(53,214,224,0.18),0 30px 60px rgba(0,0,0,0.6);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(238,240,250,0.1)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:8px;height:8px;border-radius:50%;background:#35D6E0;box-shadow:0 0 8px #35D6E0;animation:pulseglow 2s ease-in-out infinite"></span>
+          <span style="font-size:13px;font-weight:500;letter-spacing:0.04em">HACKUNIVERSE ASSISTANT</span>
+        </div>
+        <button onClick="{{ toggleChat }}" aria-label="Close assistant" style="background:transparent;border:none;color:#9aa6c4;font-size:18px;cursor:pointer">✕</button>
+      </div>
+      <div ref="{{ chatScrollRef }}" style="flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ messages }}" as="msg" hint-placeholder-count="1">
+          <div style="{{ msg.wrapStyle }}"><div style="{{ msg.bubbleStyle }}">{{ msg.content }}</div></div>
+        </sc-for>
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+          <div style="align-self:flex-start;font-size:12px;color:#71789c;letter-spacing:0.06em">thinking…</div>
+        </sc-if>
+      </div>
+      <form onSubmit="{{ handleSubmit }}" style="display:flex;gap:8px;padding:14px;border-top:1px solid rgba(238,240,250,0.1)">
+        <input value="{{ input }}" onChange="{{ setInput }}" placeholder="Ask about themes, timings, rules…" style="flex:1;background:rgba(23,26,43,0.85);border:1px solid rgba(238,240,250,0.15);border-radius:8px;padding:10px 12px;color:#eef0fa;font-size:13px;font-family:inherit" />
+        <button type="submit" disabled="{{ loading }}" style="color:#35D6E0;border:1px solid #35D6E0;border-radius:8px;padding:10px 16px;background:transparent;font-size:13px;cursor:pointer;font-family:inherit">SEND</button>
+      </form>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;registerUrl&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;https://docs.google.com/forms/d/e/1FAIpQLSetxBC5Yp_j993yRQNKeBFMr0-NbIuJhUkBZX0JQibFdx_ZZg/viewform?usp=dialog&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Behavior&quot;},
+  &quot;motionIntensity&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;balanced&quot;, &quot;options&quot;: [&quot;subtle&quot;, &quot;balanced&quot;, &quot;cinematic&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Motion&quot;},
+  &quot;showHackCore3D&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot;}
+}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.heroCanvasRef = React.createRef();
+    this.state = {
+      scrollY: 0,
+      width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+      mobileMenuOpen: false,
+      search: '',
+      selectedThemeId: null,
+      openFaqIndex: null,
+      stars: null,
+      revealed: {},
+      chatOpen: false,
+      messages: [{ role: 'assistant', content: "Hi! I'm the HACKUNIVERSE assistant. Ask me about themes, the schedule, rules, or evaluation." }],
+      input: '',
+      loading: false,
+    };
+    this.chatScrollRef = React.createRef();
+    this._revealMap = new Map();
+    this.CHAT_SYSTEM = `You are the HACKUNIVERSE event assistant for the SIH 2026 Internal Hackathon (AI & DS Innovation Hackathon, theme "Turning Ideas into Intelligent Solutions"). Answer ONLY using the facts below — this is the complete official knowledge base for the event. If asked something not covered here (e.g. exact prize money, dress code, food menu, wifi details), say you don't have that official information and suggest emailing hackuniverse.2026@gmail.com. Keep answers short (2-5 sentences), friendly and precise. If asked to register, point them to the REGISTER button / official Google Form link on the site.
+
+ABOUT: HACKUNIVERSE is an AI & DS Innovation Hackathon where student teams transform real-world problems into intelligent, innovative and demonstrable solutions. Concept pillars: THINK (understand the problem), BUILD (develop the solution), IMPACT (create meaningful real-world change).
+
+EVENT SNAPSHOT: Event — AI & DS Innovation Hackathon. Type — Inter-Collegiate Hackathon. Participants — Student Teams. Day 1 — Inauguration. Day 2 — 8-Hour Hackathon. Time — 10:00 AM to 6:00 PM (Day 2). Theme — Turning Ideas into Intelligent Solutions. Key numbers: 8 hours of hackathon, 17 SIH themes, 100 marks total evaluation, 5-minute team pitch.
+
+MISSION FLOW (order of the event for a team): Registration → Briefing → Ideation → Development → Mentor Review → Testing → Submission → Demo → Evaluation → Results.
+
+EVENT: Inter-collegiate hackathon for student teams, organized by PGP College of Engineering and Technology (Autonomous), Namakkal, Department of 3rd Year AIDS. Chief Patron: Dr. V. Kavitha. Principal Patron: Dr. M. Chitra, HoD AI&DS. Event Coordinator: Ms. S. Narmatha. Faculty Coordinator: Mrs. P. Nandhini. Student Coordinators: Nesamani S, Tamil R.
+DAY 1 (Aug 25, 2026, 3:00-4:30 PM): Inauguration — arrival, invocation, welcome address, dignitaries felicitation, lamp lighting, About NEURIXA, hackathon theme & objectives, principal's address, rules & evaluation briefing, Day 2 instructions, vote of thanks.
+DAY 2 (Aug 26, 2026, 10:00 AM-6:00 PM): 8-hour hackathon — registration & setup (10:00-10:20), briefing (10:20-10:40), ideation (10:40-11:10), Development Phase I (11:10-1:00), lunch (1:00-1:30), Development Phase II (1:30-3:00), mentor review (3:00-3:30), final development & testing (3:30-4:15), final submission prep (4:15-4:30), SUBMISSION CLOSES AT 4:30 PM SHARP, demos begin at 5:00 PM (5:00-5:40), judging (5:40-5:50), results (5:50-6:00).
+17 THEMES: 01 Smart Automation, 02 Fitness & Sports, 03 Heritage & Culture, 04 Medtech/Biotech/Healthtech, 05 Agriculture Foodtech & Rural Development, 06 Smart Vehicles, 07 Transportation & Logistics, 08 Robotics and Drones, 09 Clean & Green Technology, 10 Tourism, 11 Renewable/Sustainable Energy, 12 Blockchain & Cybersecurity, 13 Smart Education, 14 Disaster Management, 15 Toys and Games, 16 Miscellaneous, 17 Space Technology.
+PITCH FORMAT: 5 minutes total — 1 min problem statement, 1 min proposed solution, 2 min working demo, 1 min impact & future scope. Followed by 2-3 min judges Q&A if required.
+EVALUATION (100 marks): Problem Understanding & Relevance 10, Innovation/Creativity 20, Technical Implementation 25, Working Prototype/Demo 20, Real-World Impact 15, Presentation & Teamwork 10.
+RULES: Report by 10:00 AM. Bring College ID, laptop, charger. Every member must participate. Build during the hackathon period, following the assigned theme. No plagiarism. Submit by 4:30 PM — late submissions may not be evaluated. Demonstrate a working prototype. Prepare a short pitch PPT. Follow mentors/judges/organizers. Judges' decision is final.
+CONTACT: hackuniverse.2026@gmail.com, 77084665419 / 8838584301. Venue: Engineering Block, Main Block, AI & IT Lab, Namakkal. College website: pgpcet.ac.in. This website was crafted by Ctrl Alt Elite.`;
+    this._io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const key = this._revealMap.get(entry.target);
+          if (key) {
+            this.setState((s) => ({ revealed: { ...s.revealed, [key]: true } }));
+            this._io.unobserve(entry.target);
+          }
+        }
+      });
+    }, { threshold: 0.14 });
+    this._netSeed = Array.from({ length: 18 }, (_, i) => ({
+      cx: 15 + ((i * 37) % 270), cy: 15 + ((i * 61) % 345),
+      r: 2 + (i % 3) * 1.4, color: i % 2 === 0 ? '#35D6E0' : '#A78BFA',
+      opacity: 0.5 + (i % 4) * 0.12, dur: 2 + (i % 5) * 0.6, delay: (i % 6) * 0.3,
+    }));
+    this.THEMES = [
+      { id: '01', name: 'SMART AUTOMATION' },
+      { id: '02', name: 'FITNESS & SPORTS' },
+      { id: '03', name: 'HERITAGE & CULTURE' },
+      { id: '04', name: 'MEDTECH/BIOTECH/ HEALTHTECH' },
+      { id: '05', name: 'AGRICULTURE, FOODTECH & RURAL DEVELOPMENT' },
+      { id: '06', name: 'SMART VEHICLES' },
+      { id: '07', name: 'TRANSPORTATION & LOGISTICS' },
+      { id: '08', name: 'ROBOTICS AND DRONES' },
+      { id: '09', name: 'CLEAN & GREEN TECHNOLOGY' },
+      { id: '10', name: 'TOURISM' },
+      { id: '11', name: 'RENEWABLE/ SUSTAINABLE ENERGY' },
+      { id: '12', name: 'BLOCKCHAIN & CYBERSECURITY' },
+      { id: '13', name: 'SMART EDUCATION' },
+      { id: '14', name: 'DISASTER MANAGEMENT' },
+      { id: '15', name: 'TOYS AND GAMES' },
+      { id: '16', name: 'MISCELLANEOUS' },
+      { id: '17', name: 'SPACE TECHNOLOGY' },
+    ];
+    this.DAY1 = [
+      { time: '3:00 – 3:10', title: 'Participants & Dignitaries Arrival', resp: 'Welcome Team' },
+      { time: '3:10 – 3:15', title: 'Tamil Thaai Vazhthu / Invocation', resp: 'Student Team' },
+      { time: '3:15 – 3:20', title: 'Welcome Address', resp: 'Student/Faculty Coordinator' },
+      { time: '3:20 – 3:30', title: 'Dignitaries Welcome & Felicitation', resp: 'Organizing Team' },
+      { time: '3:30 – 3:40', title: 'Lamp Lighting & Formal Inauguration', resp: 'Correspondent / Dean / Principal / HODs' },
+      { time: '3:40 – 3:50', title: 'About NEURIXA', resp: 'Student Coordinator' },
+      { time: '3:50 – 4:00', title: 'Hackathon Theme & Objectives', resp: 'Faculty Coordinator' },
+      { time: '4:00 – 4:10', title: 'Address by Principal / Dean / HOD', resp: 'College Dignitaries' },
+      { time: '4:10 – 4:20', title: 'Hackathon Rules & Evaluation', resp: 'Faculty/Student Coordinator' },
+      { time: '4:20 – 4:25', title: 'Day 2 Schedule & Instructions', resp: 'Student Coordinator' },
+      { time: '4:25 – 4:30', title: 'Vote of Thanks', resp: 'Student Team' },
+    ];
+    this.DAY2 = [
+      { time: '10:00 – 10:20', title: 'Registration & Team Setup' },
+      { time: '10:20 – 10:40', title: 'Hackathon Briefing' },
+      { time: '10:40 – 11:10', title: 'Ideation & Planning' },
+      { time: '11:10 AM – 1:00 PM', title: 'Development – Phase I' },
+      { time: '1:00 – 1:30 PM', title: 'Lunch Break' },
+      { time: '1:30 – 3:00 PM', title: 'Development – Phase II' },
+      { time: '3:00 – 3:30 PM', title: 'Mentor Interaction & Review' },
+      { time: '3:30 – 4:15 PM', title: 'Final Development & Testing' },
+      { time: '4:15 – 4:30 PM', title: 'Final Submission Preparation' },
+      { time: '4:30 PM', title: 'SUBMISSION CLOSED', milestone: true },
+      { time: '5:00 – 5:40 PM', title: 'Project Demo & Pitch' },
+      { time: '5:40 – 5:50 PM', title: 'Judging & Evaluation' },
+      { time: '5:50 – 6:00 PM', title: 'Results & Valedictory' },
+    ];
+    this.RULES = [
+      'All teams must report by 10:00 AM.',
+      'Participants must carry their College ID, laptop and charger.',
+      'Every team member should actively participate.',
+      'The project should be developed during the designated hackathon period.',
+      'Teams must follow the given problem statement/theme.',
+      'Plagiarism or direct copying of existing projects is not permitted.',
+      'Teams must submit their project by 4:30 PM.',
+      'Late submissions may not be considered for evaluation.',
+      'Each team must demonstrate a working prototype or available project output.',
+      'Each team must prepare a short PPT for the final pitch.',
+      'Participants must follow the instructions of mentors, judges and organizers.',
+      "Judges' decision will be final.",
+    ];
+    this.FAQ = [
+      { q: 'What is HACKUNIVERSE?', a: 'HACKUNIVERSE is an AI & DS Innovation Hackathon where student teams transform real-world problems into intelligent, innovative and demonstrable solutions.' },
+      { q: 'Who can participate?', a: 'HACKUNIVERSE is an inter-collegiate hackathon open to student teams.' },
+      { q: 'What should participants bring?', a: 'Participants must carry their College ID, laptop and charger.' },
+      { q: 'How long is the hackathon?', a: 'Day 2 is an 8-hour hackathon running 10:00 AM – 6:00 PM.' },
+      { q: 'How many SIH themes are available?', a: 'There are 17 official SIH themes to choose from.' },
+      { q: 'When does submission close?', a: 'Submissions close at 4:30 PM. Late submissions may not be considered for evaluation.' },
+      { q: 'How long is the final pitch?', a: 'The final pitch is 5 minutes, followed by Judges Q&A of 2–3 minutes if required.' },
+      { q: 'What are the evaluation criteria?', a: 'Problem Understanding & Relevance (10), Innovation/Creativity (20), Technical Implementation (25), Working Prototype/Demo (20), Real-World Impact (15), Presentation & Teamwork (10) — Total 100 marks.' },
+      { q: 'Can judges ask questions?', a: 'Yes, judges may ask questions for 2–3 minutes after each pitch if required.' },
+    ];
+    this.COORDINATORS = [
+      { role: 'CHIEF PATRON', name: 'Dr. V. Kavitha' },
+      { role: 'PRINCIPAL PATRON', name: 'Dr. M. Chitra, HoD, AI&DS' },
+      { role: 'EVENT COORDINATOR', name: 'Ms. S. Narmatha' },
+      { role: 'FACULTY COORDINATOR', name: 'Mrs. P. Nandhini' },
+      { role: 'STUDENT COORDINATORS', name: 'Nesamani S, Tamil R' },
+    ];
+  }
+
+  componentDidMount() {
+    this._onScroll = () => this.setState({ scrollY: window.scrollY });
+    this._onResize = () => this.setState({ width: window.innerWidth });
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    window.addEventListener('resize', this._onResize);
+    const stars = Array.from({ length: 110 }, () => ({
+      style: `position:absolute;width:${1 + Math.random() * 2}px;height:${1 + Math.random() * 2}px;border-radius:50%;background:#e9e9ed;left:${Math.random() * 100}%;top:${Math.random() * 100}%;animation:twinkle ${2 + Math.random() * 5}s ease-in-out infinite;animation-delay:${Math.random() * 5}s`
+    }));
+    this.setState({ stars });
+    if (this.props.showHackCore3D ?? true) {
+      const hackcoreUrl = (typeof window !== 'undefined' && window.__resources && window.__resources.hackcore) || './hackcore.js';
+      import(hackcoreUrl).then(({ createHackCore }) => {
+        if (this.heroCanvasRef.current) {
+          this._core = createHackCore(this.heroCanvasRef.current, { accent: '#35D6E0', accent2: '#A78BFA' });
+        }
+      }).catch(() => {});
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onResize);
+    if (this._core) this._core.dispose();
+    if (this._io) this._io.disconnect();
+  }
+
+  async sendChat() {
+    const text = this.state.input.trim();
+    if (!text || this.state.loading) return;
+    const history = [...this.state.messages, { role: 'user', content: text }];
+    this.setState({ messages: history, input: '', loading: true });
+    setTimeout(() => { if (this.chatScrollRef.current) this.chatScrollRef.current.scrollTop = this.chatScrollRef.current.scrollHeight; }, 50);
+    try {
+      const reply = await window.claude.complete({
+        system: this.CHAT_SYSTEM,
+        messages: history.map(m => ({ role: m.role, content: m.content })),
+      });
+      this.setState({ messages: [...history, { role: 'assistant', content: reply }], loading: false });
+    } catch (err) {
+      this.setState({ messages: [...history, { role: 'assistant', content: "Sorry, I couldn't reach the assistant right now. Please try again or email hackuniverse.2026@gmail.com." }], loading: false });
+    }
+    setTimeout(() => { if (this.chatScrollRef.current) this.chatScrollRef.current.scrollTop = this.chatScrollRef.current.scrollHeight; }, 50);
+  }
+
+  registerReveal(el, key) {
+    if (!el || this._revealMap.has(el)) return;
+    this._revealMap.set(el, key);
+    this._io.observe(el);
+  }
+
+  renderVals() {
+    const registerUrl = this.props.registerUrl || 'https://docs.google.com/forms/d/e/1FAIpQLSetxBC5Yp_j993yRQNKeBFMr0-NbIuJhUkBZX0JQibFdx_ZZg/viewform?usp=dialog';
+    const showCore = this.props.showHackCore3D ?? true;
+    const intensity = this.props.motionIntensity || 'balanced';
+    const motionMap = {
+      subtle: { dist: 20, dur: 0.5 },
+      balanced: { dist: 48, dur: 0.9 },
+      cinematic: { dist: 84, dur: 1.35 },
+    };
+    const m = motionMap[intensity] || motionMap.balanced;
+    const motion = { coreGlow: `animation:pulseglow ${intensity === 'cinematic' ? 3 : intensity === 'subtle' ? 6 : 4.5}s ease-in-out infinite` };
+    const revealed = this.state.revealed;
+    const reveal = (key) => ({
+      ref: (el) => this.registerReveal(el, key),
+      dyn: `transition:opacity ${m.dur}s cubic-bezier(.16,1,.3,1),transform ${m.dur}s cubic-bezier(.16,1,.3,1);opacity:${revealed[key] ? 1 : 0};transform:translateY(${revealed[key] ? 0 : m.dist}px)`,
+    });
+    const rv = {
+      stats: reveal('stats'), about: reveal('about'), snapshot: reveal('snapshot'),
+      galaxies: reveal('galaxies'), day1: reveal('day1'), day2: reveal('day2'),
+      deadline: reveal('deadline'), flow: reveal('flow'), pitch: reveal('pitch'),
+      rules: reveal('rules'), faq: reveal('faq'), register: reveal('register'),
+    };
+    const isMobile = this.state.width < 1060;
+    const scrolled = this.state.scrollY > 12;
+    const navStyle = `position:fixed;top:0;left:0;right:0;z-index:150;display:flex;align-items:center;padding:16px clamp(20px,6vw,48px);transition:background 0.3s,border-color 0.3s,backdrop-filter 0.3s;${scrolled ? 'background:rgba(8,9,15,0.82);backdrop-filter:blur(16px);border-bottom:1px solid rgba(238,240,250,0.08)' : 'background:transparent;border-bottom:1px solid transparent'}`;
+
+    const search = this.state.search.trim().toLowerCase();
+    const filteredThemes = this.THEMES.filter(t => t.name.toLowerCase().includes(search) || t.id.includes(search))
+      .map(t => ({ ...t, onSelect: () => this.setState({ selectedThemeId: t.id }) }));
+    const matchedIds = new Set(filteredThemes.map(t => t.id));
+
+    const ring0 = this.THEMES.filter((_, i) => i % 2 === 0);
+    const ring1 = this.THEMES.filter((_, i) => i % 2 === 1);
+    const place = (list, radiusPct) => list.map((t, i) => {
+      const angle = (i / list.length) * Math.PI * 2 - Math.PI / 2;
+      const left = 50 + radiusPct * Math.cos(angle);
+      const top = 50 + radiusPct * Math.sin(angle);
+      const matched = search === '' || matchedIds.has(t.id);
+      return {
+        ...t,
+        onSelect: () => this.setState({ selectedThemeId: t.id }),
+        nodeStyle: `position:absolute;left:${left}%;top:${top}%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;width:88px;background:transparent;border:none;cursor:pointer;opacity:${matched ? 1 : 0.18};transition:opacity 0.3s;padding:0;animation:bob ${3.2 + (i % 4) * 0.4}s ease-in-out infinite;animation-delay:${i * 0.12}s`,
+        numStyle: `width:44px;height:44px;border-radius:50%;border:1px solid ${matched ? 'rgba(53,214,224,0.6)' : 'rgba(238,240,250,0.2)'};display:flex;align-items:center;justify-content:center;font-size:12px;color:#8FECF1;background:rgba(10,12,21,0.9);box-shadow:${matched ? '0 0 18px rgba(53,214,224,0.28)' : 'none'}`,
+        labelStyle: 'font-size:9px;letter-spacing:0.06em;color:#c9cee3;line-height:1.25;text-align:center',
+      };
+    });
+    const orbitThemes = [...place(ring0, 27), ...place(ring1, 42)];
+
+    const selectedTheme = this.THEMES.find(t => t.id === this.state.selectedThemeId) || null;
+
+    const day2 = this.DAY2.map(e => ({
+      ...e,
+      rowStyle: `position:relative;padding-bottom:34px;${e.milestone ? 'padding-top:4px' : ''}`,
+      dotStyle: `position:absolute;left:-34px;top:6px;width:${e.milestone ? 13 : 9}px;height:${e.milestone ? 13 : 9}px;border-radius:50%;background:${e.milestone ? '#A78BFA' : '#8FECF1'};margin-left:${e.milestone ? '-2px' : '0'};box-shadow:0 0 ${e.milestone ? '20px' : '12px'} ${e.milestone ? 'rgba(167,139,250,0.9)' : 'rgba(143,236,241,0.6)'};animation:pulseglow ${e.milestone ? 1.6 : 2.6}s ease-in-out infinite`,
+      timeStyle: `font-size:12px;letter-spacing:0.1em;margin-bottom:6px;color:${e.milestone ? '#A78BFA' : '#8FECF1'}`,
+      titleStyle: `font-size:${e.milestone ? '24px' : '18px'};font-weight:500;letter-spacing:${e.milestone ? '0.08em' : '-0.01em'};color:${e.milestone ? '#A78BFA' : '#eef0fa'}`,
+    }));
+
+    const flowLabels = ['REGISTRATION', 'BRIEFING', 'IDEATION', 'DEVELOPMENT', 'MENTOR REVIEW', 'TESTING', 'SUBMISSION', 'DEMO', 'EVALUATION', 'RESULTS'];
+    const flowSteps = flowLabels.map((label, i) => ({
+      label, num: String(i + 1).padStart(2, '0'),
+      dot: `width:7px;height:7px;border-radius:50%;flex:none;background:#35D6E0;box-shadow:0 0 8px rgba(53,214,224,0.7);animation:pulseglow 2s ease-in-out infinite;animation-delay:${i * 0.15}s`,
+    }));
+
+    const colors = ['#35D6E0', '#8FECF1', '#A78BFA', '#6B4FC9'];
+    const pitchSegments = [
+      { dur: '1 MIN', label: 'Problem Statement' },
+      { dur: '1 MIN', label: 'Proposed Solution' },
+      { dur: '2 MIN', label: 'Working Demo' },
+      { dur: '1 MIN', label: 'Impact & Future Scope' },
+    ].map((p, i) => ({ ...p, swatch: `width:10px;height:10px;border-radius:50%;flex:none;background:${colors[i]}` }));
+
+    const pitchWeights = [1, 1, 2, 1];
+    const total = 5;
+    const circumference = 2 * Math.PI * 100;
+    let acc = 0;
+    const pitchArcs = pitchWeights.map((w, i) => {
+      const len = (w / total) * circumference;
+      const gap = circumference - len;
+      const offset = -((acc / total) * circumference);
+      acc += w;
+      return { color: colors[i], dash: `${len} ${gap}`, offset };
+    });
+
+    const faqs = this.FAQ.map((f, i) => ({
+      ...f,
+      open: this.state.openFaqIndex === i,
+      icon: this.state.openFaqIndex === i ? '−' : '+',
+      onToggle: () => this.setState({ openFaqIndex: this.state.openFaqIndex === i ? null : i }),
+    }));
+
+    const networkNodes = this._netSeed;
+    const networkLines = networkNodes.slice(0, 14).map((n, i) => {
+      const next = networkNodes[(i + 3) % networkNodes.length];
+      return { x1: n.cx, y1: n.cy, x2: next.cx, y2: next.cy, color: n.color };
+    });
+
+    return {
+      rv,
+      networkNodes,
+      networkLines,
+      registerUrl,
+      showCore,
+      motion,
+      navStyle,
+      isMobile,
+      mobileMenuOpen: this.state.mobileMenuOpen,
+      toggleMobileMenu: () => this.setState({ mobileMenuOpen: !this.state.mobileMenuOpen }),
+      heroCanvasRef: this.heroCanvasRef,
+      stars: this.state.stars || [],
+      heroStats: [
+        { value: '8 HOURS', label: 'INTENSIVE HACKATHON' },
+        { value: '17 THEMES', label: 'SIH DOMAINS' },
+        { value: '100 MARKS', label: 'EVALUATION' },
+        { value: '5 MINUTES', label: 'TEAM PITCH' },
+      ],
+      pillars: [
+        { tag: '01', title: 'THINK', desc: 'Understand the problem.' },
+        { tag: '02', title: 'BUILD', desc: 'Develop the solution.' },
+        { tag: '03', title: 'IMPACT', desc: 'Create meaningful real-world change.' },
+      ],
+      snapshot: [
+        { k: 'EVENT', v: 'AI & DS Innovation Hackathon' },
+        { k: 'TYPE', v: 'Inter-Collegiate Hackathon' },
+        { k: 'PARTICIPANTS', v: 'Student Teams' },
+        { k: 'DAY 1', v: 'Inauguration' },
+        { k: 'DAY 2', v: '8-Hour Hackathon' },
+        { k: 'TIME', v: '10:00 AM – 6:00 PM' },
+        { k: 'THEME', v: 'Turning Ideas into Intelligent Solutions' },
+      ],
+      search: this.state.search,
+      onSearch: (e) => this.setState({ search: e.target.value }),
+      orbitThemes,
+      filteredThemes,
+      selectedTheme,
+      closeTheme: () => this.setState({ selectedThemeId: null }),
+      stop: (e) => e.stopPropagation(),
+      chatOpen: this.state.chatOpen,
+      toggleChat: () => this.setState({ chatOpen: !this.state.chatOpen }),
+      messages: this.state.messages.map(m => ({
+        content: m.content,
+        wrapStyle: `display:flex;justify-content:${m.role === 'user' ? 'flex-end' : 'flex-start'}`,
+        bubbleStyle: `max-width:82%;padding:10px 14px;border-radius:12px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;${m.role === 'user' ? 'background:rgba(53,214,224,0.15);color:#eef0fa;border:1px solid rgba(53,214,224,0.3)' : 'background:rgba(238,240,250,0.06);color:#c9cee3;border:1px solid rgba(238,240,250,0.08)'}`,
+      })),
+      loading: this.state.loading,
+      input: this.state.input,
+      chatScrollRef: this.chatScrollRef,
+      setInput: (e) => this.setState({ input: e.target.value }),
+      handleSubmit: (e) => {
+        e.preventDefault();
+        this.sendChat();
+      },
+      day1: this.DAY1,
+      day2,
+      flowSteps,
+      pitchSegments,
+      pitchArcs,
+      rules: this.RULES.map((text, i) => ({ text, num: String(i + 1).padStart(2, '0') })),
+      faqs,
+      coordinators: this.COORDINATORS,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
